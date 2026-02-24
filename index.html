@@ -207,7 +207,7 @@
   <!-- Start Screen -->
   <div id="start-screen">
     <h1>Bird Quiz</h1>
-    <p class="subtitle">Identify 10 birds from their photos</p>
+    <p class="subtitle">Identify 10 birds from a collection of 100</p>
     <p class="subtitle" style="margin-top: 16px; font-size: 0.85rem;">Written by Rob with Claude AI for Beth, his favorite person</p>
     <button class="next-btn" onclick="startGame()">Start Quiz</button>
   </div>
@@ -241,6 +241,7 @@
 
 <script>
 const BIRDS = [
+  // Original 30
   { name: "American Robin", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/American_robin_%2871307%29.jpg/960px-American_robin_%2871307%29.jpg" },
   { name: "Bald Eagle", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Bald_eagle_about_to_fly_in_Alaska_%282016%29.jpg/960px-Bald_eagle_about_to_fly_in_Alaska_%282016%29.jpg" },
   { name: "Blue Jay", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Blue_jay_in_PP_%2830960%29.jpg/960px-Blue_jay_in_PP_%2830960%29.jpg" },
@@ -271,6 +272,77 @@ const BIRDS = [
   { name: "Cedar Waxwing", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Cedar_Waxwing_-_Bombycilla_cedrorum%2C_George_Washington%27s_Birthplace_National_Monument%2C_Colonial_Beach%2C_Virginia_%2839997434862%29.jpg/960px-Cedar_Waxwing_-_Bombycilla_cedrorum%2C_George_Washington%27s_Birthplace_National_Monument%2C_Colonial_Beach%2C_Virginia_%2839997434862%29.jpg" },
   { name: "Belted Kingfisher", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/BeltedKingfisherJG_Male.jpg/960px-BeltedKingfisherJG_Male.jpg" },
   { name: "Great Horned Owl", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Bubo_virginianus_06.jpg/960px-Bubo_virginianus_06.jpg" },
+  // 70 more
+  { name: "Anna's Hummingbird", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Anna%27s_hummingbird.jpg/960px-Anna%27s_hummingbird.jpg" },
+  { name: "Snowy Egret", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Snowy_Egret_%28Egretta_thula%29_Edwin_B_Forsythe_NWR%2C_Galloway%2C_NJ%2C_USA.jpg/960px-Snowy_Egret_%28Egretta_thula%29_Edwin_B_Forsythe_NWR%2C_Galloway%2C_NJ%2C_USA.jpg" },
+  { name: "Great Egret", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Great_Egret_%28Ardea_alba%29_in_Breeding_Plumage%2C_Cape_May_County%2C_New_Jersey%2C_USA_%28cropped%29.png/960px-Great_Egret_%28Ardea_alba%29_in_Breeding_Plumage%2C_Cape_May_County%2C_New_Jersey%2C_USA_%28cropped%29.png" },
+  { name: "American Kestrel", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/American_kestrel_%28Falco_sparverius_cinnamominus%29_male_Leona_Amarga.jpg/960px-American_kestrel_%28Falco_sparverius_cinnamominus%29_male_Leona_Amarga.jpg" },
+  { name: "Cooper's Hawk", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Accipiter_cooperii_m_Sam_Smith_Toronto3.jpg/960px-Accipiter_cooperii_m_Sam_Smith_Toronto3.jpg" },
+  { name: "Barred Owl", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Strix-varia-005.jpg/960px-Strix-varia-005.jpg" },
+  { name: "Eastern Bluebird", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Sialia_sialis_-Michigan%2C_USA_-pair-8c.jpg/960px-Sialia_sialis_-Michigan%2C_USA_-pair-8c.jpg" },
+  { name: "Mountain Bluebird", img: "https://upload.wikimedia.org/wikipedia/commons/0/03/Mountain_Bluebird.jpg" },
+  { name: "Painted Bunting", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Male_Painted_Bunting_Singing.jpg/960px-Male_Painted_Bunting_Singing.jpg" },
+  { name: "Indigo Bunting", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Indigo_Bunting_by_Dan_Pancamo_4.jpg/960px-Indigo_Bunting_by_Dan_Pancamo_4.jpg" },
+  { name: "Roseate Spoonbill", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Roseate_Spoonbill_Platalea_ajaja_JG.jpg/960px-Roseate_Spoonbill_Platalea_ajaja_JG.jpg" },
+  { name: "Wood Duck", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Wood_Duck_Wissahickon_Creek.png/960px-Wood_Duck_Wissahickon_Creek.png" },
+  { name: "Mandarin Duck", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Mandarin_duck_%28Aix_galericulata%29.jpg/960px-Mandarin_duck_%28Aix_galericulata%29.jpg" },
+  { name: "Mute Swan", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/CygneVaires.jpg/960px-CygneVaires.jpg" },
+  { name: "Black Swan", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Black_swan_%28Cygnus_atratus%29_Scottsdale.jpg/960px-Black_swan_%28Cygnus_atratus%29_Scottsdale.jpg" },
+  { name: "Whooping Crane", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Grus_americana_Sasata.jpg/960px-Grus_americana_Sasata.jpg" },
+  { name: "Secretary Bird", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Secretary_bird_Mara_for_WC.jpg/960px-Secretary_bird_Mara_for_WC.jpg" },
+  { name: "Harpy Eagle", img: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Harpia_harpyja_001_800.jpg" },
+  { name: "Golden Eagle", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/015_Wild_Golden_Eagle_in_flight_at_Pfyn-Finges_%28Switzerland%29_Photo_by_Giles_Laurent.jpg/960px-015_Wild_Golden_Eagle_in_flight_at_Pfyn-Finges_%28Switzerland%29_Photo_by_Giles_Laurent.jpg" },
+  { name: "African Grey Parrot", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Perroquet_%C3%A0_Yampopo_Beach_-_Douala.jpg/960px-Perroquet_%C3%A0_Yampopo_Beach_-_Douala.jpg" },
+  { name: "Cockatiel", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Cockatiel_3.jpg/960px-Cockatiel_3.jpg" },
+  { name: "Sulphur-crested Cockatoo", img: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Cacatua_galerita_Tas_2.jpg" },
+  { name: "Budgerigar", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Budgerigar-male-strzelecki-qld.jpg/960px-Budgerigar-male-strzelecki-qld.jpg" },
+  { name: "Sun Conure", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Aratinga_solstitialis_-captive-two-8a.jpg/960px-Aratinga_solstitialis_-captive-two-8a.jpg" },
+  { name: "Resplendent Quetzal", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Resplendent_quetzal_san_gerardo_de_dota_3.31.24_DSC_3989-topaz-denoiseraw.jpg/960px-Resplendent_quetzal_san_gerardo_de_dota_3.31.24_DSC_3989-topaz-denoiseraw.jpg" },
+  { name: "Lilac-breasted Roller", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/143_Lilac-breasted_roller_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg/960px-143_Lilac-breasted_roller_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg" },
+  { name: "European Bee-eater", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Guepier_d%27europe_au_parc_national_Ichkeul.jpg/960px-Guepier_d%27europe_au_parc_national_Ichkeul.jpg" },
+  { name: "Hoopoe", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Upupa_epops_Madrid_01.jpg/960px-Upupa_epops_Madrid_01.jpg" },
+  { name: "Toco Toucan", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/006_Toco_toucan_in_Encontro_das_%C3%81guas_State_Park_Photo_by_Giles_Laurent.jpg/960px-006_Toco_toucan_in_Encontro_das_%C3%81guas_State_Park_Photo_by_Giles_Laurent.jpg" },
+  { name: "Southern Cassowary", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Southern_Cassowary_7071.jpg/960px-Southern_Cassowary_7071.jpg" },
+  { name: "Emu", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Emu_1_-_Tidbinbilla.jpg/960px-Emu_1_-_Tidbinbilla.jpg" },
+  { name: "Greater Roadrunner", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Greater_Roadrunner_Tingley_Beach.jpg/960px-Greater_Roadrunner_Tingley_Beach.jpg" },
+  { name: "Wild Turkey", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Gall-dindi.jpg/960px-Gall-dindi.jpg" },
+  { name: "Ring-necked Pheasant", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Pheasant_%28Phasianus_colchicus%29_%E2%99%82_%2851028701818%29.jpg/960px-Pheasant_%28Phasianus_colchicus%29_%E2%99%82_%2851028701818%29.jpg" },
+  { name: "California Quail", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/California_quail_%28Callipepla_californica%29_male_Tricao.jpg/960px-California_quail_%28Callipepla_californica%29_male_Tricao.jpg" },
+  { name: "Rock Dove", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Columba_livia_%28Rock_Dove%2C_wild%29%2C_Duncansby_Head%2C_Caithness%2C_Scotland_1.jpg/960px-Columba_livia_%28Rock_Dove%2C_wild%29%2C_Duncansby_Head%2C_Caithness%2C_Scotland_1.jpg" },
+  { name: "Mourning Dove", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Av_Mourning_Dove_JG.jpg/960px-Av_Mourning_Dove_JG.jpg" },
+  { name: "Barn Swallow", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Rauchschwalbe_Hirundo_rustica.jpg/960px-Rauchschwalbe_Hirundo_rustica.jpg" },
+  { name: "European Robin", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Erithacus_rubecula_with_cocked_head.jpg/960px-Erithacus_rubecula_with_cocked_head.jpg" },
+  { name: "Northern Mockingbird", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Mockingbird_in_Bay_Ridge_%2885082%29.jpg/960px-Mockingbird_in_Bay_Ridge_%2885082%29.jpg" },
+  { name: "American Crow", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Corvus-brachyrhynchos-001.jpg/960px-Corvus-brachyrhynchos-001.jpg" },
+  { name: "Common Raven", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Corvus_corax_ad_berlin_090516.jpg/960px-Corvus_corax_ad_berlin_090516.jpg" },
+  { name: "Blue-footed Booby", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Blue-footed-booby.jpg/960px-Blue-footed-booby.jpg" },
+  { name: "Magnificent Frigatebird", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Fregata_magnificens_-Galapagos%2C_Ecuador_-male-8_%281%29.jpg/960px-Fregata_magnificens_-Galapagos%2C_Ecuador_-male-8_%281%29.jpg" },
+  { name: "Arctic Tern", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Arctic_tern_%28Sterna_paradisaea%29_Flatey_3.jpg/960px-Arctic_tern_%28Sterna_paradisaea%29_Flatey_3.jpg" },
+  { name: "Herring Gull", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/European_herring_gull_vocalizing_%2800170%29.jpg/960px-European_herring_gull_vocalizing_%2800170%29.jpg" },
+  { name: "Gentoo Penguin", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Brown_Bluff-2016-Tabarin_Peninsula%E2%80%93Gentoo_penguin_%28Pygoscelis_papua%29_03.jpg/960px-Brown_Bluff-2016-Tabarin_Peninsula%E2%80%93Gentoo_penguin_%28Pygoscelis_papua%29_03.jpg" },
+  { name: "King Penguin", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/SGI-2016-South_Georgia_%28Fortuna_Bay%29%E2%80%93King_penguin_%28Aptenodytes_patagonicus%29_04.jpg/960px-SGI-2016-South_Georgia_%28Fortuna_Bay%29%E2%80%93King_penguin_%28Aptenodytes_patagonicus%29_04.jpg" },
+  { name: "Little Blue Penguin", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Blue_Penguin_Kapiti.jpg/960px-Blue_Penguin_Kapiti.jpg" },
+  { name: "Shoebill", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Balaeniceps_rex_-Ueno_Zoo%2C_Tokyo%2C_Japan-8a.jpg/960px-Balaeniceps_rex_-Ueno_Zoo%2C_Tokyo%2C_Japan-8a.jpg" },
+  { name: "Marabou Stork", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Marabou_stork_%28Leptoptilos_crumenifer%29.jpg/960px-Marabou_stork_%28Leptoptilos_crumenifer%29.jpg" },
+  { name: "Scarlet Ibis", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Oceanografic_Scarlet_Ibis_02.jpg/960px-Oceanografic_Scarlet_Ibis_02.jpg" },
+  { name: "Spotted Owl", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Spotted_Owl_Shasta%E2%80%93Trinity_National_Forest.jpg/960px-Spotted_Owl_Shasta%E2%80%93Trinity_National_Forest.jpg" },
+  { name: "Eurasian Eagle-Owl", img: "https://upload.wikimedia.org/wikipedia/commons/1/14/Bubo_bubo_3_%28Martin_Mecnarowski%29.jpg" },
+  { name: "Superb Fairywren", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Malurus_cyaneus_cyanochlamys_.jpg/960px-Malurus_cyaneus_cyanochlamys_.jpg" },
+  { name: "Kiwi", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/TeTuatahianui.jpg/960px-TeTuatahianui.jpg" },
+  { name: "Kakapo", img: "https://upload.wikimedia.org/wikipedia/commons/a/aa/Sirocco_full_length_portrait.jpg" },
+  { name: "Rainbow Lorikeet", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Rainbow_lorikeet_%28Trichoglossus_moluccanus_moluccanus%29_Sydney.jpg/960px-Rainbow_lorikeet_%28Trichoglossus_moluccanus_moluccanus%29_Sydney.jpg" },
+  { name: "Galah", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Galah_%28Eolophus_roseicapilla_albiceps%29_male_Adelaide.jpg/960px-Galah_%28Eolophus_roseicapilla_albiceps%29_male_Adelaide.jpg" },
+  { name: "Victoria Crowned Pigeon", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Goura_victoria_LC0384.jpg/960px-Goura_victoria_LC0384.jpg" },
+  { name: "Red-crowned Crane", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Grus_japonensis_-Hokkaido%2C_Japan_-several-8_%281%29.jpg/960px-Grus_japonensis_-Hokkaido%2C_Japan_-several-8_%281%29.jpg" },
+  { name: "Andean Condor", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/AndeanCondorMale.jpg/960px-AndeanCondorMale.jpg" },
+  { name: "Turkey Vulture", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Turkey_vulture_%28Cathartes_aura%29_Orange_Walk.jpg/960px-Turkey_vulture_%28Cathartes_aura%29_Orange_Walk.jpg" },
+  { name: "Rufous Hummingbird", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Rufous_Hummingbird%2C_male_01.jpg/960px-Rufous_Hummingbird%2C_male_01.jpg" },
+  { name: "Broad-billed Hummingbird", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Broad-billed_Hummingbird_%2833927224241%29.jpg/960px-Broad-billed_Hummingbird_%2833927224241%29.jpg" },
+  { name: "Vermilion Flycatcher", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Karmintyrann_%28Pyrocephalus_obscurus%29%2C_M%C3%A4nnchen_1.jpg/960px-Karmintyrann_%28Pyrocephalus_obscurus%29%2C_M%C3%A4nnchen_1.jpg" },
+  { name: "Western Tanager", img: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Western_Tanager_%28male%29.jpg" },
+  { name: "Scarlet Tanager", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Scarlet_tanager_in_GWC_%2850867%29.jpg/960px-Scarlet_tanager_in_GWC_%2850867%29.jpg" },
+  { name: "Red-winged Blackbird", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Red-Winged_Blackbird.png/960px-Red-Winged_Blackbird.png" },
+  { name: "European Starling", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Toulouse_-_Sturnus_vulgaris_-_2012-02-26_-_3.jpg/960px-Toulouse_-_Sturnus_vulgaris_-_2012-02-26_-_3.jpg" },
 ];
 
 const TOTAL_ROUNDS = 10;
