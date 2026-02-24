@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bird Quiz</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: #e8d44d;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #888;
+    margin-bottom: 24px;
+  }
+
+  .progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: #2a2a4a;
+    border-radius: 3px;
+    margin: 0 12px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #e8d44d;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .bird-image-wrapper {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #16213e;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .bird-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #2a2a4a;
+    border-top-color: #e8d44d;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .option-btn {
+    padding: 14px 16px;
+    font-size: 1rem;
+    border: 2px solid #2a2a4a;
+    border-radius: 10px;
+    background: #16213e;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: #e8d44d;
+    background: #1a2744;
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .option-btn.correct {
+    border-color: #4caf50;
+    background: #1b3d1e;
+    color: #81c784;
+  }
+
+  .option-btn.wrong {
+    border-color: #f44336;
+    background: #3d1b1b;
+    color: #e57373;
+  }
+
+  .option-btn.reveal {
+    border-color: #4caf50;
+    background: #1b3d1e;
+    color: #81c784;
+  }
+
+  .feedback {
+    text-align: center;
+    min-height: 28px;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  .next-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 10px;
+    background: #e8d44d;
+    color: #1a1a2e;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .next-btn:hover { background: #f0e06a; }
+
+  /* Score screen */
+  .score-screen { text-align: center; }
+
+  .score-screen h2 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    color: #e8d44d;
+  }
+
+  .big-score {
+    font-size: 4rem;
+    font-weight: 700;
+    margin: 20px 0;
+    color: #fff;
+  }
+
+  .score-message {
+    font-size: 1.2rem;
+    color: #aaa;
+    margin-bottom: 24px;
+  }
+
+  .review-list {
+    text-align: left;
+    margin-bottom: 24px;
+  }
+
+  .review-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #2a2a4a;
+    font-size: 0.95rem;
+  }
+
+  .review-icon { font-size: 1.2rem; width: 24px; text-align: center; }
+  .review-correct { color: #81c784; }
+  .review-wrong { color: #e57373; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Start Screen -->
+  <div id="start-screen">
+    <h1>Bird Quiz</h1>
+    <p class="subtitle">Identify 10 birds from their photos</p>
+    <button class="next-btn" onclick="startGame()">Start Quiz</button>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quiz-screen" class="hidden">
+    <div class="progress">
+      <span id="round-label">1 / 10</span>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <span id="score-label">Score: 0</span>
+    </div>
+    <div class="bird-image-wrapper">
+      <div class="loading-spinner" id="spinner"></div>
+      <img id="bird-img" class="hidden" alt="Mystery bird">
+    </div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn hidden" id="next-btn" onclick="nextRound()">Next Bird</button>
+  </div>
+
+  <!-- Score Screen -->
+  <div id="score-screen" class="hidden score-screen">
+    <h2>Quiz Complete!</h2>
+    <div class="big-score" id="final-score"></div>
+    <div class="score-message" id="score-message"></div>
+    <div class="review-list" id="review-list"></div>
+    <button class="next-btn" onclick="startGame()">Play Again</button>
+  </div>
+
+</div>
+
+<script>
+const BIRDS = [
+  { name: "American Robin", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/American_robin_%2871307%29.jpg/960px-American_robin_%2871307%29.jpg" },
+  { name: "Bald Eagle", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Bald_eagle_about_to_fly_in_Alaska_%282016%29.jpg/960px-Bald_eagle_about_to_fly_in_Alaska_%282016%29.jpg" },
+  { name: "Blue Jay", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Blue_jay_in_PP_%2830960%29.jpg/960px-Blue_jay_in_PP_%2830960%29.jpg" },
+  { name: "Northern Cardinal", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Male_northern_cardinal_in_Central_Park_%2852612%29.jpg/960px-Male_northern_cardinal_in_Central_Park_%2852612%29.jpg" },
+  { name: "Red-tailed Hawk", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Red-tailed_Hawk_%2845812546121%29.jpg/960px-Red-tailed_Hawk_%2845812546121%29.jpg" },
+  { name: "Great Blue Heron", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/GreatBlueHeronInARiver.jpg/960px-GreatBlueHeronInARiver.jpg" },
+  { name: "Ruby-throated Hummingbird", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Archilochus_colubris_-flying_-male-8.jpg/960px-Archilochus_colubris_-flying_-male-8.jpg" },
+  { name: "Mallard", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Anas_platyrhynchos_male_female_quadrat.jpg/960px-Anas_platyrhynchos_male_female_quadrat.jpg" },
+  { name: "Atlantic Puffin", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Puffin_%28Fratercula_arctica%29.jpg/960px-Puffin_%28Fratercula_arctica%29.jpg" },
+  { name: "Snowy Owl", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/SnowyOwlAmericanBlackDuck.jpg/960px-SnowyOwlAmericanBlackDuck.jpg" },
+  { name: "Barn Owl", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Barn_Owl%2C_Lancashire.jpg/960px-Barn_Owl%2C_Lancashire.jpg" },
+  { name: "Peregrine Falcon", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Falco_peregrinus_m_Humber_Bay_Park_Toronto.jpg/960px-Falco_peregrinus_m_Humber_Bay_Park_Toronto.jpg" },
+  { name: "American Flamingo", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/American_Flamingo_JG.jpg/960px-American_Flamingo_JG.jpg" },
+  { name: "Keel-billed Toucan", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Keel-billed_toucan_%28Ramphastos_sulfuratus_sulfuratus%29_on_foxtail_palm_%28Wodyetia_bifurcata%29_Cayo.jpg/960px-Keel-billed_toucan_%28Ramphastos_sulfuratus_sulfuratus%29_on_foxtail_palm_%28Wodyetia_bifurcata%29_Cayo.jpg" },
+  { name: "Indian Peafowl", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Peacock_on_tree_%2852077240794%29.jpg/960px-Peacock_on_tree_%2852077240794%29.jpg" },
+  { name: "Scarlet Macaw", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Scarlet_macaw_%28Ara_macao_cyanopterus%29_Copan.jpg/960px-Scarlet_macaw_%28Ara_macao_cyanopterus%29_Copan.jpg" },
+  { name: "Brown Pelican", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Brown_pelican_in_flight_%28Bodega_Bay%29.jpg/960px-Brown_pelican_in_flight_%28Bodega_Bay%29.jpg" },
+  { name: "Emperor Penguin", img: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Aptenodytes_forsteri_-Snow_Hill_Island%2C_Antarctica_-adults_and_juvenile-8.jpg" },
+  { name: "House Sparrow", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/House_sparrow_male_in_Prospect_Park_%2853532%29.jpg/960px-House_sparrow_male_in_Prospect_Park_%2853532%29.jpg" },
+  { name: "European Goldfinch", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/072_Wild_European_goldfinch_at_the_Parc_Jura_vaudois_Photo_by_Giles_Laurent.jpg/960px-072_Wild_European_goldfinch_at_the_Parc_Jura_vaudois_Photo_by_Giles_Laurent.jpg" },
+  { name: "Common Kingfisher", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Alcedo_atthis_-England-8_%28cropped%29.jpg/960px-Alcedo_atthis_-England-8_%28cropped%29.jpg" },
+  { name: "Osprey", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Osprey_Perched_Snag_Heislerville.jpg/960px-Osprey_Perched_Snag_Heislerville.jpg" },
+  { name: "Canada Goose", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Canada_goose_on_Seedskadee_NWR_%2827826185489%29.jpg/960px-Canada_goose_on_Seedskadee_NWR_%2827826185489%29.jpg" },
+  { name: "Sandhill Crane", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Sandhill_Crane_JG.jpg/960px-Sandhill_Crane_JG.jpg" },
+  { name: "Pileated Woodpecker", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/PileatedWoodpeckerFeedingonTree%2C_crop.jpg/960px-PileatedWoodpeckerFeedingonTree%2C_crop.jpg" },
+  { name: "Baltimore Oriole", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Baltimore_Oriole-_dorsum.jpg/960px-Baltimore_Oriole-_dorsum.jpg" },
+  { name: "American Goldfinch", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Carduelis_tristis_-Michigan%2C_USA_-male-8.jpg/960px-Carduelis_tristis_-Michigan%2C_USA_-male-8.jpg" },
+  { name: "Cedar Waxwing", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Cedar_Waxwing_-_Bombycilla_cedrorum%2C_George_Washington%27s_Birthplace_National_Monument%2C_Colonial_Beach%2C_Virginia_%2839997434862%29.jpg/960px-Cedar_Waxwing_-_Bombycilla_cedrorum%2C_George_Washington%27s_Birthplace_National_Monument%2C_Colonial_Beach%2C_Virginia_%2839997434862%29.jpg" },
+  { name: "Belted Kingfisher", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/BeltedKingfisherJG_Male.jpg/960px-BeltedKingfisherJG_Male.jpg" },
+  { name: "Great Horned Owl", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Bubo_virginianus_06.jpg/960px-Bubo_virginianus_06.jpg" },
+];
+
+const TOTAL_ROUNDS = 10;
+let currentRound = 0;
+let score = 0;
+let rounds = [];
+let answered = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRounds() {
+  const selected = shuffle(BIRDS).slice(0, TOTAL_ROUNDS);
+  return selected.map(bird => {
+    const others = shuffle(BIRDS.filter(b => b.name !== bird.name)).slice(0, 3);
+    const options = shuffle([bird, ...others]);
+    return { bird, options };
+  });
+}
+
+function show(id) {
+  document.querySelectorAll('#start-screen, #quiz-screen, #score-screen').forEach(el => el.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function startGame() {
+  currentRound = 0;
+  score = 0;
+  rounds = pickRounds();
+  show('quiz-screen');
+  showRound();
+}
+
+function showRound() {
+  answered = false;
+  const round = rounds[currentRound];
+
+  document.getElementById('round-label').textContent = `${currentRound + 1} / ${TOTAL_ROUNDS}`;
+  document.getElementById('score-label').textContent = `Score: ${score}`;
+  document.getElementById('progress-fill').style.width = `${(currentRound / TOTAL_ROUNDS) * 100}%`;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('next-btn').classList.add('hidden');
+
+  const img = document.getElementById('bird-img');
+  const spinner = document.getElementById('spinner');
+  img.classList.add('hidden');
+  spinner.classList.remove('hidden');
+
+  img.onload = () => {
+    spinner.classList.add('hidden');
+    img.classList.remove('hidden');
+  };
+  img.onerror = () => {
+    spinner.classList.add('hidden');
+    img.classList.remove('hidden');
+    img.alt = 'Image failed to load';
+  };
+  img.src = round.bird.img;
+
+  const optionsEl = document.getElementById('options');
+  optionsEl.innerHTML = '';
+  round.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt.name;
+    btn.onclick = () => handleAnswer(btn, opt, round);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function handleAnswer(btn, chosen, round) {
+  if (answered) return;
+  answered = true;
+
+  const correct = chosen.name === round.bird.name;
+  const feedback = document.getElementById('feedback');
+
+  if (correct) {
+    score++;
+    btn.classList.add('correct');
+    feedback.textContent = 'Correct!';
+    feedback.style.color = '#81c784';
+  } else {
+    btn.classList.add('wrong');
+    feedback.textContent = `Nope — it's ${round.bird.name}`;
+    feedback.style.color = '#e57373';
+    document.querySelectorAll('.option-btn').forEach(b => {
+      if (b.textContent === round.bird.name) b.classList.add('reveal');
+    });
+  }
+
+  rounds[currentRound].result = correct;
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  document.getElementById('score-label').textContent = `Score: ${score}`;
+
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.textContent = currentRound < TOTAL_ROUNDS - 1 ? 'Next Bird' : 'See Results';
+  nextBtn.classList.remove('hidden');
+}
+
+function nextRound() {
+  currentRound++;
+  if (currentRound >= TOTAL_ROUNDS) {
+    showScore();
+  } else {
+    showRound();
+  }
+}
+
+function showScore() {
+  show('score-screen');
+  document.getElementById('final-score').textContent = `${score} / ${TOTAL_ROUNDS}`;
+
+  const messages = [
+    [0, 2, "Keep practicing! Birds are tricky."],
+    [3, 4, "Not bad — you know a few birds!"],
+    [5, 6, "Solid effort! You're getting there."],
+    [7, 8, "Great job! You really know your birds."],
+    [9, 9, "Amazing! Almost perfect!"],
+    [10, 10, "Perfect score! You're a birding expert!"],
+  ];
+  const msg = messages.find(([lo, hi]) => score >= lo && score <= hi);
+  document.getElementById('score-message').textContent = msg[2];
+
+  const reviewEl = document.getElementById('review-list');
+  reviewEl.innerHTML = '';
+  rounds.forEach(r => {
+    const item = document.createElement('div');
+    item.className = 'review-item';
+    const icon = r.result ? '&#10003;' : '&#10007;';
+    const cls = r.result ? 'review-correct' : 'review-wrong';
+    item.innerHTML = `<span class="review-icon ${cls}">${icon}</span><span>${r.bird.name}</span>`;
+    reviewEl.appendChild(item);
+  });
+}
+</script>
+</body>
+</html>
